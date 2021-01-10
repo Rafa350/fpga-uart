@@ -1,16 +1,7 @@
 #include "sim.h"
-#include "RISCV.h"
-#include "RISCVMemory.h"
 
 
-#define PIPELINE
-
-
-#ifdef PIPELINE
-    #define TRACE_FILE_NAME "waves_pp/trace.fst"
-#else
-    #define TRACE_FILE_NAME "waves_sc/trace.fst"
-#endif
+#define TRACE_FILE_NAME "waves/trace.fst"
 
 
 // Els temps son en ticks de simulacio (simTime). Per que sigui totalment
@@ -18,16 +9,17 @@
 // de 10, ja que el temp del sistems (clock) es cada 10 ticks del temps
 // de simulacio (simTime)
 //
-#define CLOCK_MAX            1000  // Nombre de ticks a simular
+#define CLOCK_MAX           20000  // Nombre de ticks a simular
 #define CLOCK_START             0  // Tick per iniciar clk
 #define CLOCK_TICKS            10  // Tics per cicle clk
 
 #define CLOCK_RST_SET           0  // Tic per iniciar el reset
 #define CLOCK_RST_CLR           7  // Tic per acabar el reset
 
+#define CLOCK_WRENABLE         20  // Tic per escriure en el registre de sortida
+
 
 using namespace Simulation;
-using namespace RISCV;
 
 
 class CPUTestbench: public Testbench<Vtop, VerilatedFstC> {
@@ -35,7 +27,6 @@ class CPUTestbench: public Testbench<Vtop, VerilatedFstC> {
     public:
         CPUTestbench();
         void run();
-        void dumpDataMemory(addr_t addr, unsigned length);
 };
 
 
@@ -59,6 +50,8 @@ void CPUTestbench::run() {
 
     top->i_clock = 0;
     top->i_reset = 0;
+    top->i_addr = 0;
+    top->i_wrData = 0x55;
 
     openTrace(traceFileName);
 
@@ -82,28 +75,21 @@ void CPUTestbench::run() {
         else if (tick == CLOCK_RST_SET)
             top->i_reset = 1;
 
+        if (tick == CLOCK_WRENABLE)
+            top->i_wrEnable = 1;
+
+        else if (tick == CLOCK_WRENABLE + 10)
+            top->i_wrEnable = 0;
+
+        if (tick == CLOCK_WRENABLE + 6000)
+            top->i_wrEnable = 1;
+
+        else if (tick == CLOCK_WRENABLE + 6000 + 10)
+            top->i_wrEnable = 0;
+
     } while (nextTick() && (tick < CLOCK_MAX));
 
     closeTrace();
-}
-
-
-/// ----------------------------------------------------------------------
-/// \brief    Llista un bloc de memoria de dades
-/// \param    addr: Adressa del bloc
-/// \param    length: Longitut del bloc
-///
-void CPUTestbench::dumpDataMemory(
-    RISCV::addr_t addr,
-    unsigned length) {
-
-    Vtop *top = getTop();
-    long long memObj = top->top->dataMem->getMemObj();
-    Memory *mem = (Memory*) memObj;
-
-    printf("Data memory dump:\n");
-    mem->dump(addr, length);
-    printf("\n");
 }
 
 
@@ -119,12 +105,11 @@ int main(
     char **argv,
     char **env) {
 
-    printf("RISCV RTL Simulator V1.0\n\n");
+    printf("UART RTL Simulator V1.0\n\n");
 
     CPUTestbench *tb = new CPUTestbench();
     if (tb) {
         tb->run();
-        tb->dumpDataMemory(RISCV_DMEM_BASE, 128);
         delete tb;
     }
 

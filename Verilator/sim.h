@@ -9,10 +9,6 @@
 #include <stdio.h>
 
 #include "Vverilator_top.h"
-#include "Vverilator_top_top.h"
-#include "Vverilator_top_DataMemory__B100000_S400.h"
-
-
 #include "simTestbench.h"
 
 

@@ -1,56 +1,30 @@
-`include "RV.svh"
-
-
 `ifdef VERILATOR
-`include "Types.sv"
+`include "UART_Types.sv"
 `endif
-
 
 module top
-    import Types::*;
 (
-    input         i_clock,   // Clock
-    input         i_reset);  // Reset
+    input  logic i_clock,          // Clock
+    input  logic i_reset,          // Reset
 
-    DataMemoryBus dataBus;   // Interficie amb la memoria de dades
-    InstMemoryBus instBus;   // Interficie amb la memoria d'instruccions
+    input  logic [3:0] i_addr,
+    input  logic       i_wrEnable,
+    input  logic [7:0] i_wrData,
+    output logic [7:0] o_rdData,
 
+    input  logic i_rx,             // Senyal RX
+    output logic o_tx);            // Senyal TX
 
-    // -------------------------------------------------------------------
-    // Memoria d'instruccions
-    // -------------------------------------------------------------------
+    UART
+    uart (
+        .i_clock    (i_clock),
+        .i_reset    (i_reset),
+        .i_rx       (i_rx),
+        .o_tx       (o_tx),
+        .i_addr     (i_addr),
+        .i_wrData   (i_wrData),
+        .i_wrEnable (i_wrEnable),
+        .o_rdData   (o_rdData));
 
-    InstMemory #(
-        .FILE_NAME (`FIRMWARE))
-    instMem (
-        .bus (instBus));
-
-
-    // -------------------------------------------------------------------
-    // La memoria de dades (Emulacio DPI)
-    // -------------------------------------------------------------------
-
-    DataMemory #(
-        .BASE (`RV_DMEM_BASE),
-        .SIZE (`RV_DMEM_SIZE))
-    dataMem (
-        .i_clock (i_clock),
-        .bus     (dataBus));
-
-
-    // -------------------------------------------------------------------
-    // Procesador
-    // -------------------------------------------------------------------
-
-`ifdef PIPELINE
-    ProcessorPP
-`else
-    ProcessorSC
-`endif
-    processor (
-        .i_clock (i_clock),
-        .i_reset (i_reset),
-        .instBus (instBus),
-        .dataBus (dataBus));
 
 endmodule

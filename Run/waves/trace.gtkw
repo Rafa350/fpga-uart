@@ -1,0 +1,36 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Sun Jan 10 14:03:39 2021
+[*]
+[dumpfile] "C:\Users\Rafael\Documents\Projectes\FPGA\UART\Run\waves\trace.fst"
+[dumpfile_mtime] "Sun Jan 10 13:59:54 2021"
+[dumpfile_size] 1630
+[savefile] "C:\Users\Rafael\Documents\Projectes\FPGA\UART\Run\waves\trace.gtkw"
+[timestart] 0
+[size] 1920 1017
+[pos] -1 -1
+*-9.000000 2470 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TOP.
+[treeopen] TOP.top.
+[treeopen] TOP.top.uart.
+[sst_width] 211
+[signals_width] 262
+[sst_expanded] 1
+[sst_vpaned_height] 588
+@28
+TOP.top.i_reset
+TOP.top.i_clock
+@22
+TOP.top.i_wrData[7:0]
+@28
+TOP.top.i_wrEnable
+TOP.top.uart.uartTX.dataRdy
+@100002028
+^1 C:\Users\Rafael\Documents\Projectes\FPGA\UART\Run\waves\state_filter.txt
+TOP.top.uart.uartTX.state[3:0]
+@28
+TOP.top.uart.uartBaud.o_txce
+TOP.top.uart.uartTX.o_tx
+TOP.top.uart.uartTX.o_busy
+[pattern_trace] 1
+[pattern_trace] 0
